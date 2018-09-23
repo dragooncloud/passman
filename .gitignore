@@ -5,7 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-functions/secret
+public/js/hello-init.js
 
 # Runtime data
 pids

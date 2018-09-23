@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
+const moment = require('moment');
 
 // configure and access firestore
 admin.initializeApp(functions.config().firebase);
@@ -16,11 +17,45 @@ const FirebaseStorageApi = {
    * @returns {Promise} when done
    */
   ensureUserExists(userInfo) {
-    return getUserDocument(userInfo).set({
-      lastActivity: new Date(),
-    }, {
-      merge: true,
-    });
+    const docRef = getUserDocument(userInfo);
+    return docRef.get()
+      .then((snapshot) => {
+        if (!snapshot.exists) {
+          return false; // not found
+        }
+        return true; // found user
+      })
+      .then((isFound) => {
+        if (isFound) {
+          return Promise.resolve(); // nothing to do
+        }
+        // create boilerplate user document
+        const now = moment();
+        return docRef.set({
+          createdAt: now.toDate(),
+          subscription: {
+            paid: false,
+            expiresAt: now.add('48', 'hour').toDate(),
+          },
+        }, {
+          merge: true,
+        });
+      });
+  },
+
+  /**
+   * Return the subscription
+   * @param {*} userInfo the user's info
+   */
+  getSubscription(userInfo) {
+    return getUserDocument(userInfo).get()
+      .then((snapshot) => {
+        const data = snapshot.data();
+        if (!data) {
+          throw new Error('user not found');
+        }
+        return data.subscription;
+      });
   },
 
   /**

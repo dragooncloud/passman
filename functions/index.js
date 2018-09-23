@@ -42,6 +42,23 @@ exports.password_submit = functions.https.onRequest((request, response) => {
 });
 
 /**
+ * Get the user's subscription details
+ */
+exports.subscription = functions.https.onRequest((request, response) => {
+  cors(request, response, () => {
+    auth.secureRequest(request, response, (userAuth) => {
+      // get subscription info from storage
+      storage.getSubscription(userAuth)
+        .then(subscription => response.status(200).send({ subscription }))
+        .catch((err) => {
+          console.error('unable to get subscription', err.message);
+          response.status(500).send({ error: err.message });
+        });
+    });
+  });
+});
+
+/**
  * Fetch a password
  */
 exports.password_fetch = functions.https.onRequest((request, response) => {

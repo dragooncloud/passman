@@ -6,6 +6,8 @@
     <title>Digital Dragoon Company Password Manager</title>
     <link rel="stylesheet" href="css/animate.css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/nprogress.css"/>
     <style>
       html, body {
         margin: 0;
@@ -21,7 +23,7 @@
       }
 
       body.exit {
-        animation: exit-anim 3s forwards;
+        animation: exit-anim 2s forwards;
         cursor: none;
       }
 
@@ -40,6 +42,16 @@
       .title {
         display: block;
         font-size: 42pt;
+      }
+
+      #action_skip {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        border-color: #fff;
+        color: #fff;
+        background-color: transparent;
+        cursor: pointer;
       }
 
       #title_dragoon {
@@ -68,6 +80,10 @@
         display: none;
       }
 
+      .invisible {
+        visibility: hidden;
+      }
+
       @keyframes background-anim {
         0% { background-color: #fff; }
         5% { background-color: #000; }
@@ -80,7 +96,8 @@
 
       @keyframes exit-anim {
         0% { background-color: #FFC400; }
-        100% { background-color: #000; }
+        80% { background-color: #000; }
+        100% { background-color: #FFC400; }
       }
     </style>
   </head>
@@ -92,36 +109,55 @@
       </h1>
       <h2 id="title_passman" class="none title">Company Password Manager</h2>
       <div id="summary_passman" class="none title">The
-          <span class="typer" id="main" data-words="easiest,securist,sexiest" data-colors="#b30" data-delay="100" data-deleteDelay="1000"
+          <span class="typer" id="main" data-words="easiest,securist,prettiest" data-colors="#b30" data-delay="100" data-deleteDelay="1000"
           ></span><span class="cursor" data-owner="main"></span>
           password manager ever.
       </div>
-      <button id="action_continue" class="btn btn-outline-danger btn-lg animated none" onclick="skipIntro();">Let&lsquo;s get started</button>
+      <button 
+        id="action_continue" 
+        class="btn btn-danger btn-lg animated invisible" 
+        onclick="skipIntro();"
+        ><i class="fas fa-clock"></i> Get started in 5 simple steps&hellip;</button>
     </div>
+    <a
+        id="action_skip" 
+        class="btn btn-outline-default btn-lg none" 
+        href="/start.html"
+        >skip intro</a>
   </body>
   <script src="js/typer.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="js/nprogress.js"></script>
   <script>
     var titleDragoon = document.getElementById('title_dragoon');
     var titlePassman = document.getElementById('title_passman');
     var summaryPassman = document.getElementById('summary_passman');
     var actionContinue = document.getElementById('action_continue');
+    var actionSkip = document.getElementById('action_skip');
+
+    NProgress.configure({ trickleSpeed: 1000, showSpinner: false });
+    NProgress.start();
 
     // cursor vanish
     setTimeout(function() {
       document.body.setAttribute('class', 'no-cursor');
+      actionSkip.setAttribute('class', 'btn btn-outline-default btn-lg animated slideInUp');
+      NProgress.set(0.1);
     }, 2000);
     
     // dragoon appear
     setTimeout(function() {
       titleDragoon.setAttribute('class', 'title display-2 animated zoomIn');
+      NProgress.set(0.3);
     }, 4000);
 
     // dragoon vanish
     setTimeout(function() {
       titleDragoon.setAttribute('class', 'title display-2 animated zoomOut');
+      NProgress.inc();
+      NProgress.set(0.6);
     }, 7000);
 
     // passman appear
@@ -129,14 +165,18 @@
       titleDragoon.setAttribute('class', 'title none');
       titlePassman.setAttribute('class', 'title display-1 animated slideInDown');
       summaryPassman.setAttribute('class', 'title lead animated fadeIn');
+      actionSkip.setAttribute('class', 'btn btn-outline-default btn-lg animated fadeOut');
+      NProgress.set(0.8);
     }, 9000);
 
     // cursor returns
     setTimeout(function() {
       document.body.removeAttribute('class');
       actionContinue.setAttribute('class', 'btn btn-danger btn-lg animated slideInUp');
+      NProgress.done(true);
     }, 11000);
 
+    // user clicked proceed
     function skipIntro() {
       titlePassman.setAttribute('class', 'title display-1 animated zoomOut');
       summaryPassman.setAttribute('class', 'title lead animated fadeOut');
