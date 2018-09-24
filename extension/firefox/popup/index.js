@@ -1,14 +1,15 @@
 var port = null;
-var output = document.getElementById('popuptext');
-var outputAuth = document.getElementById('output_auth');
-var outputPasswords = document.getElementById('passwords');
-var action_autofill = document.getElementById('action_autofill');
-var lastPassword = null;
+var lastPasswords = [];
 
-// auto-fille
-action_autofill.addEventListener('click', (e) => {
-  if (!lastPassword) {
-    console.warn('cant autofill as no password is available');
+// auto-fill the current site based on user chosen credentials
+document.addEventListener('request-auto-fill', (e) => {
+  if (!lastPasswords) {
+    console.warn('cant autofill as no passwords are available');
+    return;
+  }
+  const credentials = lastPasswords.filter(p => p.name === e.detail.name && p.host === e.detail.host);
+  if (credentials.length === 0) {
+    console.warn('no credentials found to reference', e.detail);
     return;
   }
   if (!port) {
@@ -17,7 +18,7 @@ action_autofill.addEventListener('click', (e) => {
   }
   port.postMessage({
     type: 'autofill',
-    credentials: lastPassword,
+    credentials: credentials[0],
   });
 });
 
@@ -28,19 +29,20 @@ function flushSessionUi() {
         console.warn('no sync storage available');
         return;
       }
-      outputAuth.innerText = `You are logged in via ${state.network}`;
-      outputAuth.setAttribute('title', state.access_token);
+      console.log('state from storage', state);
+      // update the ui with this data
+      window.emit('view-model', state);
       return state;
     });
 }
 
 const Api = {
   'password-fields'(message) {
-    if (message.fieldCount === 0) {
-      output.innerText = 'Not a login page';
-      return;
+    var pageSummary = 'No log-in form detected.';
+    if (message.fieldCount > 0) {
+      pageSummary = `login page for ${message.site}`;
     }
-    output.innerText = `login page for ${message.site}`;
+    window.emit('view-model', { pageSummary });
     flushSessionUi()
       .then((auth) => {
         console.log('getting passwords for page');
@@ -55,19 +57,11 @@ const Api = {
     })
     .then(r => r.json())
     .then((result) => {
-      const pwds = result.relevant;
-      outputPasswords.innerText = pwds.map(p => `${p.name} for ${p.host}`).toString();
-      action_autofill.style.display = pwds.length === 0 ? 'none' : 'block';
-      if (pwds.length === 0) {
-        lastPassword = null;
-      } else {
-        console.log('last password set to', pwds[0]);
-        lastPassword = pwds[0];
-      }
+      lastPasswords = result.relevant;
+      window.emit('view-model', { passwords: lastPasswords });
     })
     .catch((err) => {
       console.error('unable to get passwords', err.message);
-      outputPasswords.innerText = `Error: ${err.message}`;
     });
   },
   'auth-session'(message) {

@@ -2,13 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet"/>
+  <link rel="stylesheet" href="popup.css"/>
 </head>
 <body>
-  <h1 id="popuptext">hello from pop-up</h1>
+  <div id="canvas"></div>
+  <script id="template" type="x-tmpl-mustache">
+    {{#error}}
+      <div class="error">{{ &. }}</div>
+    {{/error}}
+    <h1>{{ title }}</h1>
+    <abbr title="{{ access_token }}">{{ network }}</abbr>
+    {{#pageSummary}}
+      <p class="summary">{{ . }}</p>
+    {{/pageSummary}}
+    <ul>
+      {{#passwords}}
+        <li><a 
+            href="#" 
+            class="auto-fill-option"
+            data-host="{{ host }}"
+            data-name="{{ name }}"
+            >{{ host }}/{{ name }}</a>
+        </li>
+      {{/passwords}}
+    </ul>
+  </script>
+  <!-- <h1 id="popuptext">hello from pop-up</h1>
   <abbr id="output_auth">You are not logged in</abbr>
   <div id="passwords"></div>
-  <button id="action_autofill" style="display: none">Auto-fill</button>
+  <button id="action_autofill" style="display: none">Auto-fill</button> -->
+  <script src="./moustache.min.js"></script>
+  <script src="./mvvm.js"></script>
   <script src="./index.js"></script>
 </body>
 </html>
