@@ -9,7 +9,15 @@
   },
 
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "tabs"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content-scripts/main.js"]
+    }
   ],
 
   "browser_action": {
