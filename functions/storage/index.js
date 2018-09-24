@@ -44,6 +44,20 @@ const FirebaseStorageApi = {
   },
 
   /**
+   * Get passwords relevant to the site being requested
+   * @param {*} userAuth the calling user info
+   * @param {string} siteRequested the host of the site these are being requested from
+   * @returns {Promise<*>} callback with passwords
+   */
+  getPasswords(userAuth, siteRequested) {
+    return getUserDocument(userAuth)
+      .get()
+      .then(snapshot => snapshot.data()
+        .passwords
+        .filter(p => p.host.toUpperCase() === siteRequested.toUpperCase()));
+  },
+
+  /**
    * Return the subscription
    * @param {*} userInfo the user's info
    */

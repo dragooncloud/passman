@@ -17,6 +17,7 @@ document.addEventListener('stepped', function(e) {
 
   // when user has logged in
 	hello.on('auth.login', function(auth) {
+		window.localStorage.setItem('auth-provider', auth.network);
 		hello(auth.network).api('me')
 			.then(function(me) {
         document.dispatchEvent(

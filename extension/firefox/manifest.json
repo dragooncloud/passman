@@ -1,6 +1,11 @@
 {
   "manifest_version": 2,
   "name": "Dragoon Company Password Manager",
+  "applications": {
+    "gecko": {
+      "id": "passman@dragoon.cloud"
+    }
+  },
   "version": "0.1",
   "description": "Super secure and easy to use password manager for companies and individuals",
   "homepage_url": "https://digital.dragoon.cloud/",
@@ -10,7 +15,8 @@
 
   "permissions": [
     "activeTab",
-    "tabs"
+    "tabs",
+    "storage"
   ],
 
   "content_scripts": [

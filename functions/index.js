@@ -1,8 +1,8 @@
 const functions = require('firebase-functions');
 
 const cors = require('cors')({
-  origin: true,
-  allowedHeaders: ['Authorization'],
+  origin: '*',
+  allowedHeaders: 'Content-Type,Authorization,Origin',
   credentials: true,
   methods: ['POST', 'GET', 'PUT'],
 });
@@ -64,22 +64,12 @@ exports.subscription = functions.https.onRequest((request, response) => {
 exports.password_fetch = functions.https.onRequest((request, response) => {
   cors(request, response, () => {
     auth.secureRequest(request, response, (userAuth) => {
-      response.status(200).send({
-        userAuth,
-        relevant: [
-          {
-            name: 'default',
-            username: 'foo',
-            password: 'bar',
-            host: 'github.com',
-          },
-          {
-            name: 'default',
-            username: 'foo2',
-            password: 'bar321',
-            host: 'stackoverflow.com',
-          },
-        ],
+      const siteRequested = request.body.site;
+      storage.getPasswords(userAuth, siteRequested).then((pwds) => {
+        response.status(200).send({
+          userAuth,
+          relevant: pwds,
+        });
       });
     });
   });
