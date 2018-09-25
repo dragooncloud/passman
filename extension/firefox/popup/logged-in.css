@@ -1,0 +1,79 @@
+ul.passwords {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+ul.passwords li.choice {
+  display: block;
+  padding: 30px;
+  border-top: 1px solid #f0f0f0;
+}
+
+ul.passwords li.choice .name {
+  color: #999;
+}
+
+ul.passwords li.choice:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+ul.passwords li.choice .site {
+  color: #333;
+  font-size: 1.3em;
+}
+
+ul.passwords li.choice {
+  border-left: 4px solid rgb(177, 177, 177);
+}
+ul.passwords li.choice:first-child {
+  border-left: 4px solid rgb(0, 143, 71);
+}
+
+h2 {
+  margin: 0;
+  padding: 5px;
+  background-color: #999;
+  color: #fff;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+form input, form button {
+  width: 100%;
+  padding: 7px;
+  font-size: 1.3em;
+  margin: 2px 0;
+}
+
+form input {
+  border-color: #ccc;
+  color: #555;
+}
+
+form input#name {
+  font-size: 0.8em;
+  padding: 3px;
+}
+
+form input.error-field {
+  border-color: #f00;
+}
+
+#suggest_password {
+  display: block;
+  color: rgb(42, 179, 0);
+  text-align: center;
+  text-decoration: none;
+  animation: cycle-link 3s infinite;
+}
+@keyframes cycle-link {
+  0% { color: rgb(42, 179, 0); }
+  50% { color: rgb(0, 61, 141); }
+  100% { color: rgb(42, 179, 0); }
+}

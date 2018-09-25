@@ -3,29 +3,63 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="popup.css"/>
+  <link rel="stylesheet" href="logged-in.css"/>
 </head>
 <body>
   <div id="canvas"></div>
+  <!-- user is not yet logged in -->
+  <script id="no-login-template" type="x-tmpl-mustache">
+    <div class="error">
+      <i class="fas fa-info-circle"></i>
+      Please visit <a href="https://passwords.dragoon.cloud">passwords.dragoon.cloud</a> to sign-in.
+    </div>
+    <h1>Dragoon <small>Company Password Manager</small></h1>
+    <div class="not-logged-in animated fadeIn">
+      <div class="up-arrow">
+        <i class="far fa-arrow-alt-circle-up"></i>
+      </div>
+      Please sign-in before using this extension
+    </div>
+  </script>
+
+  <!-- no login forms detected -->
+  <script id="no-login-forms-detected-template" type="x-tmpl-mustache">
+    <h1>Dragoon <small>Company Password Manager</small></h1>
+    <div class="note-to-user animated fadeIn">
+      This page does not contain any login forms, so nothing for me to do here.
+    </div>
+  </script>
+
+  <!-- user is logged in -->
   <script id="template" type="x-tmpl-mustache">
-    {{#error}}
-      <div class="error">{{ &. }}</div>
-    {{/error}}
-    <h1>{{ title }}</h1>
-    <abbr title="{{ access_token }}">{{ network }}</abbr>
-    {{#pageSummary}}
-      <p class="summary">{{ . }}</p>
-    {{/pageSummary}}
-    <ul>
+    <h1>Dragoon <small>Company Password Manager</small></h1>
+    <h2>Passwords</h2>
+    <ul class="passwords">
       {{#passwords}}
-        <li><a 
-            href="#" 
-            class="auto-fill-option"
-            data-host="{{ host }}"
-            data-name="{{ name }}"
-            >{{ host }}/{{ name }}</a>
-        </li>
+      <li class="choice pwd-choice" data-name="{{ name }}" data-host="{{ host }}">
+        <div class="name">{{ name }}</div>
+        <div class="site">{{ host }}</div>
+      </li>
+      {{/passwords}}
+      {{^passwords}}
+        <div class="note-to-user">No passwords for this site, use the fields below to store one&hellip;</div>
       {{/passwords}}
     </ul>
+    <h2>Store new password for this site</h2>
+    {{#error}}
+    <div class="error">
+      <!-- You already have credentials for this site, please give this
+      a unique reference below. -->
+      {{ . }}
+    </div>
+    {{/error}}
+    <form>
+      <input type="email" id="username" placeholder="username"/>
+      <input type="password" id="password" placeholder="password"/>
+      <a id="suggest_password" href="#">suggest password for me</a>
+      <input class="error-field" type="text" id="name" placeholder="your reference (or 'default' if left unset)"/>
+      <button id="action_new_password">Use these credentials</button>
+    </form>
   </script>
   <!-- <h1 id="popuptext">hello from pop-up</h1>
   <abbr id="output_auth">You are not logged in</abbr>

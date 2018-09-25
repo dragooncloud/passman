@@ -16,10 +16,15 @@ document.addEventListener('request-auto-fill', (e) => {
     console.warn('cant autofill as no connection to page is available');
     return;
   }
+
+  // send the credentials to the page
   port.postMessage({
     type: 'autofill',
     credentials: credentials[0],
   });
+
+  // now auto-close the popup
+  setTimeout(window.close, 50);
 });
 
 function flushSessionUi() {
@@ -38,11 +43,12 @@ function flushSessionUi() {
 
 const Api = {
   'password-fields'(message) {
+    var isLoginPage = message.fieldCount > 0;
     var pageSummary = 'No log-in form detected.';
-    if (message.fieldCount > 0) {
+    if (isLoginPage) {
       pageSummary = `login page for ${message.site}`;
     }
-    window.emit('view-model', { pageSummary });
+    window.emit('view-model', { pageSummary, isLoginPage });
     flushSessionUi()
       .then((auth) => {
         console.log('getting passwords for page');
