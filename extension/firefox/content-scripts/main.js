@@ -58,6 +58,7 @@ const Api = {
 
 document.addEventListener('extension-installed', () => {
   // build a 2-way connection to the extension
+  // SYN ACK (2)
   port = browser.runtime.connect();
   port.onMessage.addListener((message, socket) => {
     console.log('message received from extension', message, socket);

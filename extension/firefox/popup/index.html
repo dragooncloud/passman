@@ -30,6 +30,14 @@
     </div>
   </script>
 
+  <!-- scanning page transient state -->
+  <script id="scanning-page-template" type="x-tmpl-mustache">
+    <h1>Dragoon <small>Company Password Manager</small></h1>
+    <div class="note-to-user animated fadeIn">
+      Scanning page, please wait&hellip;
+    </div>
+  </script>
+
   <!-- user is logged in -->
   <script id="template" type="x-tmpl-mustache">
     <h1>Dragoon <small>Company Password Manager</small></h1>
@@ -54,11 +62,11 @@
     </div>
     {{/error}}
     <form>
-      <input type="email" id="username" placeholder="username"/>
-      <input type="password" id="password" placeholder="password"/>
+      <input type="text" required id="username" placeholder="username"/>
+      <input type="password" required id="password" placeholder="password"/>
       <a id="suggest_password" href="#">suggest password for me</a>
       <input class="error-field" type="text" id="name" placeholder="your reference (or 'default' if left unset)"/>
-      <button id="action_new_password">Use these credentials</button>
+      <button class="action" data-event="new-password-entered" id="action_new_password">Use these credentials</button>
     </form>
   </script>
   <!-- <h1 id="popuptext">hello from pop-up</h1>

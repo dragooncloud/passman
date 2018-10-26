@@ -1,5 +1,11 @@
 const storage = require('../storage');
 
+const validProviders = [
+  'facebook',
+  'google',
+  'windows',
+];
+
 /**
  * Parse the auth header and return auth provider and access_token
  * @param {string} headerValue the value of the Authorization header
@@ -13,6 +19,12 @@ const parseAuthenticationHeader = (headerValue) => {
 
   const provider = split[0];
   const accessToken = split[1];
+
+  // validate provider
+  if (validProviders.indexOf(provider) === -1) {
+    throw new Error('Unknown authentication provider specified');
+  }
+
   return {
     provider,
     accessToken,

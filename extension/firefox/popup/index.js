@@ -64,10 +64,18 @@ const Api = {
     .then(r => r.json())
     .then((result) => {
       lastPasswords = result.relevant;
-      window.emit('view-model', { passwords: lastPasswords });
+      window.emit('view-model', { 
+        passwords: lastPasswords,
+      });
     })
     .catch((err) => {
       console.error('unable to get passwords', err.message);
+    })
+    .finally(() => {
+      // no longer scanning
+      window.emit('view-model', { 
+        isScanningPage: false,
+      });
     });
   },
   'auth-session'(message) {
@@ -91,6 +99,39 @@ const onMessageReceived = (e, a2, a3, a4) => {
   }
 };
 
+document.addEventListener('new-password-entered', (viewModel) => {
+  const { site } = viewModel;
+  const usernameElem = document.getElementById('username');
+  const passwordElem = document.getElementById('password');
+  const nameElem = document.getElementById('name');
+  const name = nameElem.value;
+  if (name.length === '') {
+    name = 'default';
+  }
+  console.log('add password', site, usernameElem.value, passwordElem.value);
+  return fetch('https://us-central1-dragoon-passman.cloudfunctions.net/password_fetch', {
+    method: 'post',
+    body: JSON.stringify({ site, name, username: usernameElem.value, password: passwordElem.value }),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': viewModel.network + ' ' + viewModel.access_token,
+    }
+  })
+  .then(() => {
+    // clear out fields
+    usernameElem.value = '';
+    passwordElem.value = '';
+    nameElem.value = '';
+    // TODO: refresh password list
+  })
+  .catch (err => {
+    // show error
+    window.emit('view-model', { error: err.message });
+  });
+});
+
+// ACK (3)
+// on-load build a connection to the content script
 browser.runtime.onConnect.addListener((e) => {
   console.log('received connection from page ' + JSON.stringify(e));
 
@@ -99,13 +140,15 @@ browser.runtime.onConnect.addListener((e) => {
   port.onMessage.addListener(onMessageReceived);
 
   // now use the content script to determine if this page is a login page
+  window.emit('view-model', { isScanningPage: true });
   port.postMessage({
     type: 'check-for-password-fields' 
   });
 });
 
+// SYN (1)
 // NOTE: detail is not accessible from page, so you can't put anything useful
 // in here anyway (otherwise you get an 'access denied error')
 browser.tabs.executeScript({
-  code: `document.dispatchEvent(new CustomEvent('extension-installed', { detail: { }	}));`,
+  code: `document.dispatchEvent(new CustomEvent('extension-installed', { detail: { } }));`,
 });

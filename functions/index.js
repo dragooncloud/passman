@@ -25,6 +25,7 @@ exports.user_logged_in = functions.https.onRequest((request, response) => {
  * Submit a password
  */
 exports.password_submit = functions.https.onRequest((request, response) => {
+  console.log('password_submit', request.body);
   cors(request, response, () => {
     auth.secureRequest(request, response, (userAuth) => {
       // save password to storage layer
